@@ -29,4 +29,8 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
     fun getMoviesLiveData(): LiveData<ArrayList<MovieLocal>> {
         return movieRepository.getMoviesLiveData()
     }
+
+    suspend fun reloadData() {
+        movieRepository.reloadData()
+    }
 }

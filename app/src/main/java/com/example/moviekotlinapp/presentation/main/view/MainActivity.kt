@@ -5,12 +5,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moviekotlinapp.R
 import com.example.moviekotlinapp.data.database.entity.MovieLocal
 import com.example.moviekotlinapp.databinding.ActivityMainBinding
 import com.example.moviekotlinapp.presentation.main.adapter.MovieAdapter
 import com.example.moviekotlinapp.presentation.main.viewmodel.MainActivityViewModel
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,11 +29,23 @@ class MainActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         subscribe()
+        onClickListeners()
     }
 
     private fun subscribe() {
         viewModel.getMoviesLiveData().observe(this) {
             loadRv(it)
+        }
+    }
+
+    private fun onClickListeners() {
+        binding.addMovieBtn.setOnClickListener {
+            startActivity(
+                Intent(
+                    this@MainActivity,
+                    AddMovieActivity::class.java
+                )
+            )
         }
     }
 
@@ -52,5 +66,12 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            viewModel.reloadData()
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.example.moviekotlinapp.data.database.MovieLocalDao
 import com.example.moviekotlinapp.data.database.entity.MovieLocal
 import com.example.moviekotlinapp.data.model.Movie
 import com.example.moviekotlinapp.data.service.RetrofitInstance
+import com.example.moviekotlinapp.data.utils.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -50,6 +51,7 @@ class MovieRepository(private val movieLocalDao: MovieLocalDao) {
         }
     }
 
+    //save to database and pass data from database to livedata
     private suspend fun saveToDatabase(movies: ArrayList<MovieLocal>) =
         withContext(Dispatchers.IO) {
             movies.forEach { movieLocal -> insertMovie(movieLocal) }
@@ -57,6 +59,42 @@ class MovieRepository(private val movieLocalDao: MovieLocalDao) {
             moviesLiveData.postValue(ArrayList(getAllMovies()))
             Log.d("Movie Repository", "Saved to database and displaying data")
         }
+
+    //post movie to api then add movie from response to database
+    suspend fun addMovie(movie: Movie, callback: (response: Boolean) -> Unit) = withContext(Dispatchers.IO) {
+        val response = RetrofitInstance.service.addMovie(movie, Constants.AUTH_TOKEN)
+
+        if (response.isSuccessful) {
+            val addedMovie = response.body()
+
+            if (addedMovie != null) {
+                val convertedMovie = MovieLocal(
+                    null, addedMovie.title, addedMovie.year,
+                    addedMovie.rated, addedMovie.released, addedMovie.runtime,
+                    addedMovie.genre, addedMovie.director, addedMovie.writer,
+                    addedMovie.actors, addedMovie.plot, addedMovie.language, addedMovie.country,
+                    addedMovie.awards, addedMovie.images[1], addedMovie.metascore,
+                    addedMovie.imdbRating, addedMovie.imdbVotes, addedMovie.imdbID,
+                    addedMovie.type, addedMovie.response, addedMovie.images[0],
+                    addedMovie.totalSeasons, addedMovie.comingSoon
+                )
+
+                insertMovie(convertedMovie)
+                callback.invoke(true)
+
+            } else {
+                Log.d("Movie Repository", "No response body")
+            }
+
+        } else {
+            callback.invoke(false)
+            Log.d("Movie Repository", "Error found is " + response.message())
+        }
+    }
+
+    suspend fun reloadData() = withContext(Dispatchers.IO) {
+        moviesLiveData.postValue(ArrayList(getAllMovies()))
+    }
 
     //data from room/local database
     //get all movies
