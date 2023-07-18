@@ -2,14 +2,12 @@ package com.example.moviekotlinapp.presentation.main.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moviekotlinapp.R
 import com.example.moviekotlinapp.data.database.entity.MovieLocal
-import com.example.moviekotlinapp.data.model.Movie
 import com.example.moviekotlinapp.databinding.ActivityMainBinding
 import com.example.moviekotlinapp.presentation.main.adapter.MovieAdapter
 import com.example.moviekotlinapp.presentation.main.viewmodel.MainActivityViewModel
@@ -32,21 +30,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun subscribe() {
-        /*viewModel.getMoviesLiveData().observe(this) {
-            if (!it.isNullOrEmpty()) {
-                Log.d("Movie Status", "Observer getMovies: $it")
-                viewModel.getAllMovies(it)
-            }
-        }*/
-
-        viewModel.allMovies.observe(this) {
-            Log.d("Movie Status", "Observer allMovies: $it")
-            if (it.isNullOrEmpty()) {
-                Log.d("Movie Status", "Observer allMovies is null: $it")
-                viewModel.getMoviesLiveData()
-            } else {
-                loadRv(ArrayList(it))
-            }
+        viewModel.getMoviesLiveData().observe(this) {
+            loadRv(it)
         }
     }
 

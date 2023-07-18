@@ -19,7 +19,7 @@ interface MovieLocalDao {
 
     //read all movies from database and arrange in asc order by id
     @Query("SELECT * FROM movie_local order by id ASC")
-    fun getAllMovies() : LiveData<List<MovieLocal>>
+    fun getAllMovies() : List<MovieLocal>
 
     //delete a movie
     @Delete
