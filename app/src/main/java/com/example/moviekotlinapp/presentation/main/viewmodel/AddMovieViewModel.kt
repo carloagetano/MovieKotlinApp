@@ -21,7 +21,7 @@ class AddMovieViewModel(application: Application) : AndroidViewModel(application
 
     init {
         val movieLocalDao = MovieDatabase.getDatabase(application).getMovieLocalDao()
-        movieRepository = MovieRepository(movieLocalDao)
+        movieRepository = MovieRepository(movieLocalDao, application)
     }
 
 

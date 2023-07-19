@@ -1,5 +1,7 @@
 package com.example.moviekotlinapp.data.repository
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,14 +9,20 @@ import com.example.moviekotlinapp.data.database.MovieLocalDao
 import com.example.moviekotlinapp.data.database.entity.MovieLocal
 import com.example.moviekotlinapp.data.model.Movie
 import com.example.moviekotlinapp.data.service.RetrofitInstance
-import com.example.moviekotlinapp.data.utils.Constants
+import com.example.moviekotlinapp.data.utils.Constants.AUTH_TOKEN
+import com.example.moviekotlinapp.data.utils.EncryptDataStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-class MovieRepository(private val movieLocalDao: MovieLocalDao) {
+class MovieRepository(
+    private val movieLocalDao: MovieLocalDao,
+    context: Context
+) {
 
     private val moviesLiveData = MutableLiveData<ArrayList<MovieLocal>>()
+
+    private val encryptDataStore: SharedPreferences = EncryptDataStore.getInstance(context)
 
     fun getMoviesLiveData(): LiveData<ArrayList<MovieLocal>> {
         return moviesLiveData
@@ -46,6 +54,12 @@ class MovieRepository(private val movieLocalDao: MovieLocalDao) {
                 saveToDatabase(it)
             }
 
+            //store auth token to encrypted shared preferences
+            with(encryptDataStore.edit()) {
+                putString("authorization", AUTH_TOKEN)
+                apply()
+            }
+
         } else {
             Log.d("Movie Repository", "Error found is " + response.message())
         }
@@ -61,36 +75,40 @@ class MovieRepository(private val movieLocalDao: MovieLocalDao) {
         }
 
     //post movie to api then add movie from response to database
-    suspend fun addMovie(movie: Movie, callback: (response: Boolean) -> Unit) = withContext(Dispatchers.IO) {
-        val response = RetrofitInstance.service.addMovie(movie, Constants.AUTH_TOKEN)
+    suspend fun addMovie(movie: Movie, callback: (response: Boolean) -> Unit) =
+        withContext(Dispatchers.IO) {
+            val encryptedToken = encryptDataStore.getString("authorization", "")
 
-        if (response.isSuccessful) {
-            val addedMovie = response.body()
+            val response = RetrofitInstance.service.addMovie(movie, encryptedToken.toString())
 
-            if (addedMovie != null) {
-                val convertedMovie = MovieLocal(
-                    null, addedMovie.title, addedMovie.year,
-                    addedMovie.rated, addedMovie.released, addedMovie.runtime,
-                    addedMovie.genre, addedMovie.director, addedMovie.writer,
-                    addedMovie.actors, addedMovie.plot, addedMovie.language, addedMovie.country,
-                    addedMovie.awards, addedMovie.images[1], addedMovie.metascore,
-                    addedMovie.imdbRating, addedMovie.imdbVotes, addedMovie.imdbID,
-                    addedMovie.type, addedMovie.response, addedMovie.images[0],
-                    addedMovie.totalSeasons, addedMovie.comingSoon
-                )
+            if (response.isSuccessful) {
+                val addedMovie = response.body()
 
-                insertMovie(convertedMovie)
-                callback.invoke(true)
+                if (addedMovie != null) {
+                    val convertedMovie = MovieLocal(
+                        null, addedMovie.title, addedMovie.year,
+                        addedMovie.rated, addedMovie.released, addedMovie.runtime,
+                        addedMovie.genre, addedMovie.director, addedMovie.writer,
+                        addedMovie.actors, addedMovie.plot, addedMovie.language, addedMovie.country,
+                        addedMovie.awards, addedMovie.images[1], addedMovie.metascore,
+                        addedMovie.imdbRating, addedMovie.imdbVotes, addedMovie.imdbID,
+                        addedMovie.type, addedMovie.response, addedMovie.images[0],
+                        addedMovie.totalSeasons, addedMovie.comingSoon
+                    )
+
+                    insertMovie(convertedMovie)
+                    callback.invoke(true)
+
+                } else {
+                    callback.invoke(false)
+                    Log.d("Movie Repository", "No response body")
+                }
 
             } else {
-                Log.d("Movie Repository", "No response body")
+                callback.invoke(false)
+                Log.d("Movie Repository", "Error found is " + response.message())
             }
-
-        } else {
-            callback.invoke(false)
-            Log.d("Movie Repository", "Error found is " + response.message())
         }
-    }
 
     suspend fun reloadData() = withContext(Dispatchers.IO) {
         moviesLiveData.postValue(ArrayList(getAllMovies()))

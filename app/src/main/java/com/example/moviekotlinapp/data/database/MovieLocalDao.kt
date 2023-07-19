@@ -18,7 +18,7 @@ interface MovieLocalDao {
     suspend fun insertMovie(movieLocal: MovieLocal)
 
     //read all movies from database and arrange in asc order by id
-    @Query("SELECT * FROM movie_local order by id ASC")
+    @Query("SELECT * FROM movie_local order by id DESC")
     fun getAllMovies() : List<MovieLocal>
 
     //delete a movie
