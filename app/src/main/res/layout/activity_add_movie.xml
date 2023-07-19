@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".presentation.main.view.AddMovieActivity">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/back_btn"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:drawableStart="@drawable/ic_arrow_back"
+            android:gravity="start|center"
+            android:text="@string/back"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/title_etv"
+            android:layout_width="250dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="150dp"
+            android:hint="@string/title_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/released_etv"
+            android:layout_width="250dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:hint="@string/released_date_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_etv" />
+
+        <EditText
+            android:id="@+id/rating_etv"
+            android:layout_width="250dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:hint="@string/rating_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/released_etv" />
+
+        <EditText
+            android:id="@+id/img_poster_etv"
+            android:layout_width="250dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:hint="@string/movie_image_poster_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rating_etv" />
+
+        <EditText
+            android:id="@+id/img_backdrop_etv"
+            android:layout_width="250dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:hint="@string/movie_image_backdrop_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/img_poster_etv" />
+
+        <EditText
+            android:id="@+id/plot_etv"
+            android:layout_width="250dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:hint="@string/plot_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/img_backdrop_etv" />
+
+        <Button
+            android:id="@+id/add_movie_btn"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/add_movie_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/plot_etv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
