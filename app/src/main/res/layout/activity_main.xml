@@ -22,10 +22,10 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_marginBottom="5dp"
                 android:text="@string/movie_app"
                 android:textAlignment="center" />
 
@@ -33,7 +33,7 @@
                 android:id="@+id/movieRv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:listitem="@layout/item_movie"/>
+                tools:listitem="@layout/item_movie" />
 
         </LinearLayout>
 

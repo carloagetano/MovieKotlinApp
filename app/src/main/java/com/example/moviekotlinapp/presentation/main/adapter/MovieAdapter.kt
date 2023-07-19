@@ -35,6 +35,7 @@ class MovieAdapter : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
         Glide.with(holder.itemMovieBinding.root)
             .load(movie.images)
             .centerCrop()
+            .placeholder(R.drawable.image_placeholder)
             .into(holder.itemMovieBinding.moviePosterImg)
 
         holder.itemMovieBinding.root.setOnClickListener {
