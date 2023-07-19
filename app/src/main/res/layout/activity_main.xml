@@ -22,12 +22,15 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
+                android:fontFamily="@font/rubik_bold"
                 android:text="@string/movie_app"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@color/secondary_black"
+                android:textSize="20sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/movieRv"

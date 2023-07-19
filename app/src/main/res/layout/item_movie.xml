@@ -47,18 +47,19 @@
 
                 <TextView
                     android:id="@+id/movie_title_tv"
-                    style="@style/TextAppearance.AppCompat.Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/rubik_medium"
                     android:text="@{movie.title}"
                     android:textColor="@color/white"
+                    android:textSize="20sp"
                     tools:text="Spider-Man" />
 
                 <TextView
                     android:id="@+id/year_released_tv"
-                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/rubik"
                     android:text="@{movie.released}"
                     android:textColor="@color/white"
                     android:textSize="16sp"
