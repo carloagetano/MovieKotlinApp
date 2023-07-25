@@ -7,9 +7,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.moviekotlinapp.data.database.MovieLocalDao
 import com.example.moviekotlinapp.data.database.entity.MovieLocal
+import com.example.moviekotlinapp.data.model.EncryptedMovie
 import com.example.moviekotlinapp.data.model.Movie
 import com.example.moviekotlinapp.data.service.RetrofitInstance
 import com.example.moviekotlinapp.data.utils.Constants.AUTH_TOKEN
+import com.example.moviekotlinapp.data.utils.CryptoManager
 import com.example.moviekotlinapp.data.utils.EncryptDataStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -23,6 +25,8 @@ class MovieRepository(
     private val moviesLiveData = MutableLiveData<ArrayList<MovieLocal>>()
 
     private val encryptDataStore: SharedPreferences = EncryptDataStore.getInstance(context)
+
+    private val cryptoManager = CryptoManager()
 
     fun getMoviesLiveData(): LiveData<ArrayList<MovieLocal>> {
         return moviesLiveData
@@ -79,21 +83,53 @@ class MovieRepository(
         withContext(Dispatchers.IO) {
             val encryptedToken = encryptDataStore.getString("authorization", "")
 
-            val response = RetrofitInstance.service.addMovie(movie, encryptedToken.toString())
+            val encryptedMovie = cryptoManager.encryptMovie(movie)
+
+            Log.d("Movie Repository", "Encrypted Movie: $encryptedMovie")
+
+            val response = RetrofitInstance.service.addMovie(
+                EncryptedMovie(encryptedMovie),
+                encryptedToken.toString()
+            )
 
             if (response.isSuccessful) {
                 val addedMovie = response.body()
 
                 if (addedMovie != null) {
+
+                    Log.d(
+                        "Movie Repository",
+                        "Encrypted Movie Response: ${addedMovie.encryptedMovie}"
+                    )
+                    val decryptedMovie = cryptoManager.decryptMovie(addedMovie.encryptedMovie)
+
+                    Log.d("Movie Repository", "Decrypted Movie: $decryptedMovie")
+
                     val convertedMovie = MovieLocal(
-                        null, addedMovie.title, addedMovie.year,
-                        addedMovie.rated, addedMovie.released, addedMovie.runtime,
-                        addedMovie.genre, addedMovie.director, addedMovie.writer,
-                        addedMovie.actors, addedMovie.plot, addedMovie.language, addedMovie.country,
-                        addedMovie.awards, addedMovie.images[1], addedMovie.metascore,
-                        addedMovie.imdbRating, addedMovie.imdbVotes, addedMovie.imdbID,
-                        addedMovie.type, addedMovie.response, addedMovie.images[0],
-                        addedMovie.totalSeasons, addedMovie.comingSoon
+                        null,
+                        decryptedMovie.title,
+                        decryptedMovie.year,
+                        decryptedMovie.rated,
+                        decryptedMovie.released,
+                        decryptedMovie.runtime,
+                        decryptedMovie.genre,
+                        decryptedMovie.director,
+                        decryptedMovie.writer,
+                        decryptedMovie.actors,
+                        decryptedMovie.plot,
+                        decryptedMovie.language,
+                        decryptedMovie.country,
+                        decryptedMovie.awards,
+                        decryptedMovie.images[1],
+                        decryptedMovie.metascore,
+                        decryptedMovie.imdbRating,
+                        decryptedMovie.imdbVotes,
+                        decryptedMovie.imdbID,
+                        decryptedMovie.type,
+                        decryptedMovie.response,
+                        decryptedMovie.images[0],
+                        decryptedMovie.totalSeasons,
+                        decryptedMovie.comingSoon
                     )
 
                     insertMovie(convertedMovie)
