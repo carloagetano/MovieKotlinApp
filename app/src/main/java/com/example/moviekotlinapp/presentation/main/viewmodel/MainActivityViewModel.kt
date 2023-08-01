@@ -27,7 +27,9 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         return movieRepository.getMoviesLiveData()
     }
 
-    suspend fun reloadData() {
-        movieRepository.reloadData()
+    fun reloadData() {
+        viewModelScope.launch {
+            movieRepository.reloadData()
+        }
     }
 }
