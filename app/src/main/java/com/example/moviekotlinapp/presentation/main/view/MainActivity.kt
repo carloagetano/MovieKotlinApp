@@ -70,8 +70,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch {
-            viewModel.reloadData()
-        }
+        //you should not expose suspend functions from viewModel and call them in a lifecycleScope
+        viewModel.reloadData()
     }
 }
